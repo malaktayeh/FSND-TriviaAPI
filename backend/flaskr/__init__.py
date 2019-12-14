@@ -52,6 +52,9 @@ def create_app(test_config=None):
     for category in categories_data:
       categories.append(category.type)
 
+    if len(categories) == 0:
+      abort(404)
+
     return jsonify({
       'success': True,
       'categories': categories,
@@ -98,7 +101,7 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
-  @app.route('/questions/<int:question_id>', methods=["DELETE"])
+  @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def delete_question(question_id):
     try:
       question = Question.query.filter(Question.id == question_id).one_or_none()
@@ -113,8 +116,9 @@ def create_app(test_config=None):
       
       return jsonify({
         'success': True,
+        'deleted': question_id,
         'questions': current_questions,
-        'total_questions': len(selection)
+        'total_questions': len(Question.query.all())
       })
     except:
       abort(422)
@@ -151,7 +155,6 @@ def create_app(test_config=None):
 
     # add new question to db
     else:
-
       body = request.get_json()
 
       new_question = body.get('question', None)
@@ -202,16 +205,18 @@ def create_app(test_config=None):
   '''
   @app.route('/categories/<int:category_id>/questions', methods=['GET'])
   def filter_questions(category_id):
-    selection = Question.query.filter(Question.category == category_id)
+    selection = Question.query.filter(Question.category == category_id+1).order_by(Question.id).all()
     current_questions = paginate_questions(request, selection)
 
     if len(current_questions) == 0:
       abort(404)
 
+    category = Category.query.filter(Category.id == category_id+1).one_or_none()
+
     return jsonify({
         'success': True,
         'questions': current_questions,
-        'current_category': category_id
+        'current_category': category_id+1
     })
 
 
@@ -226,19 +231,38 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
-  @app.route('/quizzes/', methods=['POST'])
+  @app.route('/quizzes', methods=['POST'])
   def play_trivia():
-    categories_data = Category.query.all()
-    categories = []
+    body = request.get_json()
+    category = int(body['quiz_category']['id'])
+    previous_questions = body['previous_questions']
 
-    for category in categories_data:
-      categories.append(category.type)
+    if category is 0:
+      query_by_category = Question.query.all()
+    else:
+      query_by_category = Question.query.filter(Question.category == category+1)
 
+    query = [question.format() for question in query_by_category]
+
+    play = True
+    question = random.choice(query)
+
+    while (play):
+      if (question.get('id') not in previous_questions):
+        return jsonify({
+          'success': True,
+          'question': question
+        })
+      else:
+        if (len(question) > len(previous_questions)):
+          question = random.choice(query)
+        else:
+          play = False
     return jsonify({
-      'success': True,
-      'categories': categories
-
-    })
+          'success': True,
+          'question': question,
+          'category': category+1
+        })
 
   '''
   @TODO: 
@@ -274,7 +298,7 @@ def create_app(test_config=None):
     return jsonify({
       "success": False,
       "error": 422,
-      "message": "unprocessable"
+      "message": "Unprocessable"
     }), 422
   
   return app
