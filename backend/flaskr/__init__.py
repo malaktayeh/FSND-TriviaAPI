@@ -153,7 +153,6 @@ def create_app(test_config=None):
         if (body is {}):
             abort(400)
         elif (search_str is not ''):
-            print('not yay!')
             selection = Question.query.\
                 filter(Question.question.ilike(f'%{search_str}%')).all()
             current_questions = paginate_questions(request, selection)
@@ -163,7 +162,7 @@ def create_app(test_config=None):
                 'questions': current_questions,
                 'total_questions': len(selection),
                 'current_category': None
-            }) 
+            })
 
     '''
     @TODO:
@@ -195,7 +194,6 @@ def create_app(test_config=None):
                     category=new_category
                 )
 
-                print(question)
                 question.insert()
 
                 selection = Question.query.order_by(Question.id).all()
@@ -208,7 +206,7 @@ def create_app(test_config=None):
                     'total_questions': len(selection)
                 })
             except Exception:
-                abort(404)     
+                abort(404)
 
     '''
     @TODO:
@@ -226,11 +224,8 @@ def create_app(test_config=None):
 
         current_questions = paginate_questions(request, selection)
 
-        if len(current_questions) == 0:
+        if len(selection) == 0:
             abort(404)
-
-        # category = Category.query.filter(Category.id == category_id+1)\
-        #     .one_or_none()
 
         return jsonify({
             'success': True,
@@ -258,6 +253,9 @@ def create_app(test_config=None):
         category_type = body['quiz_category']['type']
         previous_questions = body['previous_questions']
 
+        if (previous_questions is None and category_type is None):
+            abort(405)
+
         # if 'All' category has been selected
         if category_type is 'click':
             category = None
@@ -278,10 +276,10 @@ def create_app(test_config=None):
 
         while (play):
             if (question.get('id') not in previous_questions):
-                print(question.get('id'))
                 return jsonify({
                     'success': True,
-                    'question': question
+                    'question': question,
+                    'category': category+1
                 })
             else:
                 if (len(question) > len(previous_questions)):
