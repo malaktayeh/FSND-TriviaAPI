@@ -85,9 +85,9 @@ To start and run the app please do the following:
 
 ### GET '/questions'
 #### General:
-    - Returns a list of questions, categories, success value, success message, and a total number of questions
-    - Results are paginated
-    - Sample: curl http://127.0.0.1:5000/questions
+- Returns a list of questions, categories, success value, success message, and a total number of questions
+- Results are paginated
+- Sample: curl http://127.0.0.1:5000/questions
 ```json
 {
     "categories": [
@@ -177,14 +177,14 @@ To start and run the app please do the following:
 ```
 ### DELETE '/questions/{id}'
 #### General:
-    - Returns a new list of paginated questions minus the deleted one, a success message, the id of the deleted item, and a total number of questions
-    - Sample: curl -X DELETE http://127.0.0.1:5000/questions/1
+- Returns a new list of paginated questions minus the deleted one, a success message, the id of the deleted item, and a total number of questions
+- Sample: curl -X DELETE http://127.0.0.1:5000/questions/1
 
 ### POST '/questions'
 ### General:
-    - Returns a filtered list of questions based on search term, a success message, and the total number of questions.
-    - Results are paginated
-    - Sample: curl http://localhost:5000/questions -H "Content-Type: application/json" -d "{'search_term': 'title'}" -X POST
+- Returns a filtered list of questions based on search term, a success message, and the total number of questions.
+- Results are paginated
+- Sample: curl http://localhost:5000/questions -H "Content-Type: application/json" -d "{'search_term': 'title'}" -X POST
 ```json
 {
   "current_category": null,
@@ -210,9 +210,9 @@ To start and run the app please do the following:
 ```
 ### POST '/questions/add'
 ### General:
-    - Returns a filtered list of questions plus new question, a success message, the total number of questions, and the new question id.
-    - Results are paginated
-    - Sample: curl -X POST http://127.0.0.1:5000/questions/add -H "Content-Type: application/json" -d '{"question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?", "answer": "Edward Scissorhands", "difficulty": 3, "category": 5}'
+- Returns a filtered list of questions plus new question, a success message, the total number of questions, and the new question id.
+- Results are paginated
+- Sample: curl -X POST http://127.0.0.1:5000/questions/add -H "Content-Type: application/json" -d '{"question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?", "answer": "Edward Scissorhands", "difficulty": 3, "category": 5}'
 ```json
 {
   "created": 195,
@@ -296,9 +296,9 @@ To start and run the app please do the following:
     
 ### GET '/categories/{id}/questions'
 ### General:
-    - Returns a list of questions based on selected category, a success message, and the id of the category
-    - Results are paginated
-    - Sample: curl http://127.0.0.1:5000/categories/2/questions
+- Returns a list of questions based on selected category, a success message, and the id of the category
+- Results are paginated
+- Sample: curl http://127.0.0.1:5000/categories/2/questions
 ```json
 {
   "current_category": 3,
@@ -324,11 +324,19 @@ To start and run the app please do the following:
     
 ### POST '/quizzes'
 ### General:
-    - Returns a random question from the selected category, a success message, and the id of the category
-    - Sample: curl -X POST http://localhost:5000/quizzes -H "Content-Type: application/json" -d '{ "previous_questions": [], "quiz_category": {"type": "Sports", "id": 5 }}'
+- Returns a random question from the selected category, a success message, and the id of the category
+- Sample: curl -X POST http://localhost:5000/quizzes -H "Content-Type: application/json" -d '{ "previous_questions": [], "quiz_category": {"type": "Sports", "id": 5 }}'
 ```json
 {
-
+  "category": 7,
+  "question": {
+    "answer": "Uruguay",
+    "category": 6,
+    "difficulty": 4,
+    "id": 11,
+    "question": "Which country won the first ever soccer World Cup in 1930?"
+  },
+  "success": true
 }
 ```
 
